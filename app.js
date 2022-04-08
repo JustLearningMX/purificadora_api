@@ -19,14 +19,9 @@ app.use(bodyParser.urlencoded({ extended: false})); //Parsea el body
 app.use(bodyParser.json()); //Datos a JSONs
 app.use(cors()); //Seguridad en peticiones
 
-//Middleware para gestionar los endpoints
+//Middleware para gestionar los endpoints mediante un ruteador
 // purificadora_api/v1 --> Raíz de la API
-app.get('/v1', (req, res)=>{
-    res.json({
-        error: null,
-        message: 'Bienvenido a la API de Purificadora Río Jordán'
-    });
-});
+app.use('/v1', require('./routes/index'));
 
 //Ponemos la aplicación a la escucha
 const PORT = process.env.PORT;
