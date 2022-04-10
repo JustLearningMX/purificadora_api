@@ -15,7 +15,7 @@ const {
 //Middlewares para los endpoints de /usuarios
 router.get('/', login); // Reenvía al Login
 router.get('/login', login); //purificadora_api/v1/usuarios/login
-router.get('/signup', signup); //purificadora_api/v1/usuarios/signup
+router.post('/signup', signup); //purificadora_api/v1/usuarios/signup
 
 //Exportamos el router creado
 module.exports = router;

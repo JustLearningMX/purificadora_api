@@ -39,7 +39,7 @@ const UsuarioSchema = new mongoose.Schema(
     },
 
     //Campos opcionales que se pueden Actualizar una vez dado de alta
-    direccion: String,
+    /* direccion: String,
     ciudad: String,
     cp: { 
         type: String,
@@ -54,7 +54,7 @@ const UsuarioSchema = new mongoose.Schema(
     telefonoRecuperacion: {
         type: String,
         match: [/^[0-9]+$/, "Es inválido"],
-    },
+    }, */
   },
   {
     timestamps: true, //Fecha de creación y/o modificación
