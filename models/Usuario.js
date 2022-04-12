@@ -8,7 +8,8 @@
 const mongoose = require("mongoose");//Importamos mongoose
 const uniqueValidator = require("mongoose-unique-validator"); //Para validar email y teléfono.
 const crypto = require('crypto'); //Para generar y validar hashes
-const jwt = require('jsonwebtoken'); //
+const jwt = require('jsonwebtoken'); //Módulo para generar un JWT
+const secret = process.env.SECRET; //Palabra secreta para firmar el JWT
 
 
 // Esquema para el Usuario: Se incluyen los campos y sus validaciones
@@ -83,7 +84,36 @@ UsuarioSchema.methods.validarPassword = function (password) {
     .toString("hex"); //Lo pasa a string
 
     return this.hash === hash; //Valida ambos hashes y retorna boleano
-}
+};
+
+//Método para generar un JWT de 30 días
+UsuarioSchema.methods.generarJWT = function () {
+
+  //30 días de validez del token antes de expirar
+  const hoy = new Date();
+  const expedido = new Date(hoy);
+  expedido.setDate(hoy.getDate() + 30);
+
+  // Regresamos el token firmado
+  return jwt.sign( //Payload del JWT
+    {
+      id: this._id, //Id del usuario en la BD
+      telefono: this.telefono, //Su teléfono
+      email: this.email,
+      exp: parseInt(expedido.getTime() / 1000), //Periodo validez
+    }, secret ); //Palabra secreta para validar el token
+
+};
+
+//Método que regresa al cliente una representación en JSON del usuario ya autenticado
+UsuarioSchema.methods.toAuthJSON = function () {
+  return { //retornamos campos y token
+    id: this._id, 
+    telefono: this.telefono,
+    email: this.email,
+    token: this.generarJWT(),
+  };
+};
 
 //Función que devuelve datos públicos del esquema creado
 UsuarioSchema.methods.publicData = function(){

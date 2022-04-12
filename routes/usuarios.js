@@ -5,16 +5,18 @@
 
 //Instanciamos un elemento router de Express
 const router = require('express').Router();
+const { requerido, opcional } = require('./auth');
 
 //Importamos las funciones del controlador Usuarios
 const {
     login,
-    signup
+    signup,
+    obtenerUsuario
  } = require('../controllers/usuarios');
 
 //Middlewares para los endpoints de /usuarios
-router.get('/', login); // Reenvía al Login
-router.get('/login', login); //purificadora_api/v1/usuarios/login
+router.get('/:id', requerido, obtenerUsuario); // Un usuario solo puede solicitar info de sí mismo
+router.post('/login', login); //purificadora_api/v1/usuarios/login
 router.post('/signup', signup); //purificadora_api/v1/usuarios/signup
 
 //Exportamos el router creado

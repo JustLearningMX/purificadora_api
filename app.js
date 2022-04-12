@@ -15,6 +15,9 @@ const mongoose = require('mongoose'); //ODM para MongoDB
 //Importamos los Modelos
 require('./models/Usuario');
 
+//Registro de PassporJS
+require('./config/passport');
+
 //Creamos la aplicación
 const app = express();
 
