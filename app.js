@@ -30,12 +30,12 @@ const dbName = process.env.DB_NAME; //Nombre de la BD
 
 //Creamos la conexión a la BD con MongoDB usando Mongoose
 // Candena de conexión obtenida desde MongoDB Atlas
-mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.kvrrq.mongodb.net/${dbName}?retryWrites=true&w=majority`)
+mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.lpioa.mongodb.net/${dbName}?retryWrites=true&w=majority`)
     .then(()=>{ //Si todo salió bien
-        debug(`Conexión a la BD ${dbName} exitosa`);
+        debug(`¡Conexión al servidor de MongoDB exitosa!`);
     })
     .catch((error) => {//Si algo salió mal
-        debug(`Error en la conexión a la BD ${dbName}`, error);
+        debug(`Error en la conexión al servidor de MongoDB`, error);
     });
 
 //Debuguear mongoose
