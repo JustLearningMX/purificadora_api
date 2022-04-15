@@ -7,10 +7,8 @@
 const jwt = require('express-jwt'); //Módulo para autorizaciones en rutas y datos
 
 //Palabra secreta para firmar el JWT
-const config = require('../config');
-const secret = process.env.SECRET; 
-// const secret = process.env.SECRET; //Palabra secreta para firmar el JWT
-
+// const config = require('../config');
+const secret = process.env.SECRET; //Palabra secreta para firmar el JWT
 
 // Obtenemos el jwt del header de la petición y verificamos su existencia.
 function obtenerTokenDelHeader(req) {

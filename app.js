@@ -13,7 +13,7 @@ const swaggerUi = require('swagger-ui-express');//Documentación
 const swaggerDocument = require('./swagger.json');//Documentación
 
 //Configura variables de entorno
-require('./config');
+// require('./config');
 
 //Importamos los Modelos
 require('./models/Usuario');
