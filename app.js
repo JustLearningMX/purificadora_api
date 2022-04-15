@@ -6,11 +6,14 @@
 
 //Se importan las dependencias
 const express = require('express'); //Para levantar un servidor
-const bodyParser = require('body-parser'); //Parsea cuerpo de peticiones
 const cors = require('cors'); //Seguridad en peticiones HTTP
 const debug = require('debug')('app:main'); //Debug de la aplicación
-require('dotenv').config(); //Configura variables de entorno
 const mongoose = require('mongoose'); //ODM para MongoDB
+const swaggerUi = require('swagger-ui-express');//Documentación
+const swaggerDocument = require('./swagger.json');//Documentación
+
+//Configura variables de entorno
+require('./config');
 
 //Importamos los Modelos
 require('./models/Usuario');
@@ -22,11 +25,11 @@ require('./config/passport');
 const app = express();
 
 //Middlewares necesarios
-app.use(bodyParser.urlencoded({ extended: false})); //Parsea el body
-app.use(bodyParser.json()); //Datos a JSONs
+app.use(express.json()); //Parsea el body
+app.use(express.urlencoded({ extended: false})); //Parsea URL codificados del body
 app.use(cors()); //Seguridad en peticiones
 
-//Obtenemos los datos para la conexión con la BD (de .env)
+//Obtenemos los datos para la conexión con la BD
 const dbUser = process.env.DB_USER; //Usuario de la BD
 const dbPass = process.env.DB_PASS; //Su password
 const dbName = process.env.DB_NAME; //Nombre de la BD
@@ -47,6 +50,7 @@ mongoose.set('debug', true);
 //Middleware para gestionar los endpoints mediante un ruteador
 // purificadora_api/v1 --> Raíz de la API
 app.use('/v1', require('./routes/index'));
+app.use('/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));//Endpoint para la documentación
 
 //Ponemos la aplicación a la escucha
 const PORT = process.env.PORT;

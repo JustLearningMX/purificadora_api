@@ -9,8 +9,10 @@ const mongoose = require("mongoose");//Importamos mongoose
 const uniqueValidator = require("mongoose-unique-validator"); //Para validar email y teléfono.
 const crypto = require('crypto'); //Para generar y validar hashes
 const jwt = require('jsonwebtoken'); //Módulo para generar un JWT
-const secret = process.env.SECRET; //Palabra secreta para firmar el JWT
 
+//Palabra secreta para firmar el JWT
+// const config = require('../config');
+const secret = process.env.SECRET; 
 
 // Esquema para el Usuario: Se incluyen los campos y sus validaciones
 const UsuarioSchema = new mongoose.Schema(
@@ -100,6 +102,7 @@ UsuarioSchema.methods.generarJWT = function () {
       id: this._id, //Id del usuario en la BD
       telefono: this.telefono, //Su teléfono
       email: this.email,
+      admin: this.tipo === 'admin' ? true : false,
       exp: parseInt(expedido.getTime() / 1000), //Periodo validez
     }, secret ); //Palabra secreta para validar el token
 
@@ -111,6 +114,7 @@ UsuarioSchema.methods.toAuthJSON = function () {
     id: this._id, 
     telefono: this.telefono,
     email: this.email,
+    admin: this.tipo === 'admin' ? true : false,
     token: this.generarJWT(),
   };
 };

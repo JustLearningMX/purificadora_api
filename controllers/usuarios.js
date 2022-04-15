@@ -7,7 +7,6 @@
 
 const mongoose = require('mongoose'); //Mongoose para usar esquemas de modelos
 const passport = require('passport'); //Módulo para autenticación
-
 const Usuario = mongoose.model('Usuario'); //Modelo a utilizar
 
 //Crear nuevo usuario
@@ -16,9 +15,20 @@ function signup(req, res, next) {
     //Obtenemos el cuerpo con los datos de la petición
     //para crear un usuario nuevo se requieren: nombre, 
     //apellidos, tipo, email, telefono, password
-    const body = req.body;
+    const body = req.body;        
         password = body.password; //Obtenemos el pass en texto plano del body
         delete body.password; //Lo eliminamos para evitar problemas de seguridad
+
+    if(!req.usuario){        
+        body.tipo = 'cliente'
+    } else if(!req.usuario.admin) {
+        return (
+            res.status(401).json({
+                error: true,
+                message: 'No tiene autorización para crear usuarios'
+            })
+        );
+    }
 
     //Creamos un nuevo usuario basado en el modelo y su esquema
     const usuario = new Usuario(body);
@@ -66,7 +76,7 @@ function login(req, res, next) {
         //Si no hubo error
         if(user){ // Existe el usuario
             user.token = user.generarJWT(); //Generamos su token
-            return res.json({
+            return res.status(200).json({
                 error: null,
                 message: 'Login exitoso',
                 user: user.toAuthJSON(),

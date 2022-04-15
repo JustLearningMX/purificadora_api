@@ -32,7 +32,7 @@ passport.use(
 );
 
 /**
- * LocalStrategy inspecciona los campos username y password de las peticiones que vienen 
+ * LocalStrategy inspecciona los campos telefono y password de las peticiones que vienen 
  * del frontend, esperando que la petición tenga el siguiente formato:
  * 
  *  {

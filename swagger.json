@@ -1,0 +1,407 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Purificadora Rio Jordán API",
+    "description": "API de la Purificadora Río Jordán que se encarga de gestionar la información de la base de datos en MongoDB de la empresa y sus procesos de negocio.",
+    "contact": {
+      "name": "Hiram Chávez López",
+      "email": "virtual.liga@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4015/v1",
+      "description": "servidor local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "usuarios",
+      "description": "Endpoint que maneja toda la información referente a los usuarios."
+    }
+  ],
+  "paths": {
+    "/usuarios/signup": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Registro de usuario nuevo",
+        "description": "Permite a un usuario registrarse como Cliente. Administradores pueden crear usuarios de tipo Admin, Empleado y Cliente con su Token (Logueados).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/signUpUsuario"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Registro exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/signUpExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/usuarios/login": {
+      "post": {
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Inicio de sesión y autenticado de usuario",
+        "description": "Permite a un usuario registrado iniciar sesión y obtener un token de seguridad.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginUsuario"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Login exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/usuarios": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Usuario ya autenticado obtiene sus datos",
+        "description": "Retorna datos del usuario que coincida con el IdUser del Token. JWT de seguridad requerido.",
+        "responses": {
+          "201": {
+            "description": "Usuario encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneDatosUsuario"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "Unauthorized": {
+        "description": "(Unauthorized) No hay autorización para llamar el servicio"
+      },
+      "NotFound": {
+        "description": "(NotFound) No se encontró información"
+      },
+      "BadRequest": {
+        "description": "(BadRequest) Datos enviados incorrectos o hay datos obligatorios no enviados"
+      },
+      "ServerError": {
+        "description": "(ServerError) Error en el servidor"
+      }
+    },
+    "parameters": {
+      "token": {
+        "in": "header",
+        "name": "token",
+        "description": "Token de autenticación.",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Id del usuario",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "signUpUsuario": {
+        "type": "object",
+        "required": [
+          "nombre",
+          "apellidos",
+          "email",
+          "telefono",
+          "password",
+          "tipo"
+        ],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "invitado"
+          },
+          "apellidos": {
+            "type": "string",
+            "example": "guess"
+          },
+          "email": {
+            "type": "string",
+            "example": "guess@none.com"
+          },
+          "telefono": {
+            "type": "string",
+            "example": 999876543
+          },
+          "password": {
+            "type": "string",
+            "example": "unpasswordcualquiera"
+          },
+          "tipo": {
+            "type": "string",
+            "example": "cliente"
+          }
+        }
+      },
+      "signUpExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "null"
+          },
+          "message": {
+            "type": "string",
+            "example": "Usuario guardado exitosamente"
+          },
+          "usuario": {
+            "type": "object",
+            "required": [
+              "nombre",
+              "apellidos",
+              "email",
+              "telefono",
+              "password",
+              "tipo"
+            ],
+            "properties": {
+              "nombre": {
+                "type": "string",
+                "example": "invitado"
+              },
+              "apellidos": {
+                "type": "string",
+                "example": "guess"
+              },
+              "email": {
+                "type": "string",
+                "example": "guess@none.com"
+              },
+              "telefono": {
+                "type": "string",
+                "example": 999876543
+              },
+              "password": {
+                "type": "string",
+                "example": "unpasswordcualquiera"
+              },
+              "tipo": {
+                "type": "string",
+                "example": "cliente"
+              }
+            }
+          }
+        }
+      },
+      "loginUsuario": {
+        "type": "object",
+        "required": [
+          "telefono",
+          "password"
+        ],
+        "properties": {
+          "telefono": {
+            "type": "string",
+            "example": 8331234567
+          },
+          "password": {
+            "type": "string",
+            "example": "mipassword123"
+          }
+        }
+      },
+      "loginExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Login exitoso"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "6255d9b05e779cf3a8a22c76"
+              },
+              "telefono": {
+                "type": "string",
+                "example": 8331234567
+              },
+              "email": {
+                "type": "string",
+                "example": "none@none.com"
+              },
+              "token": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "obtieneDatosUsuario": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Usuario encontrado"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "6255d9b05e779cf3a8a22c76"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Hiram"
+              },
+              "apellidos": {
+                "type": "string",
+                "example": "Chávez"
+              },
+              "tipo": {
+                "type": "string",
+                "example": "Admin"
+              },
+              "email": {
+                "type": "string",
+                "example": "none@none.com"
+              },
+              "telefono": {
+                "type": "string",
+                "example": 8331234567
+              },
+              "direccion": {
+                "type": "string",
+                "example": "mi dirección"
+              },
+              "ciudad": {
+                "type": "string",
+                "example": "Tampico"
+              },
+              "cp": {
+                "type": "string",
+                "example": 89550
+              },
+              "rfc": {
+                "type": "string",
+                "example": "calh811212f90"
+              },
+              "emailRecuperacion": {
+                "type": "string",
+                "example": "otroemail@none.com"
+              },
+              "telefonoRecuperacion": {
+                "type": "string",
+                "example": 9990987654
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

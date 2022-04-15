@@ -15,9 +15,9 @@ const {
  } = require('../controllers/usuarios');
 
 //Middlewares para los endpoints de /usuarios
-router.get('/:id', requerido, obtenerUsuario); // Un usuario solo puede solicitar info de sí mismo
+router.get('/', requerido, obtenerUsuario); // Un usuario solo puede solicitar info de sí mismo
 router.post('/login', login); //purificadora_api/v1/usuarios/login
-router.post('/signup', signup); //purificadora_api/v1/usuarios/signup
+router.post('/signup', opcional, signup); //purificadora_api/v1/usuarios/signup
 
 //Exportamos el router creado
 module.exports = router;
