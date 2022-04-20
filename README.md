@@ -13,11 +13,9 @@ git clone https://github.com/JustLearningMX/purificadora_api
 ### Pre-requisitos 📋
 
 - express
-- body-parser
-- cors
-- dotenv
 - debug
 - mongoose
+- passport
 
 ```
 npm install
@@ -25,7 +23,7 @@ npm install
 
 ## Documentación 📌
 
-[Swagger](http://) Próximamente.
+[purificadora-API](https://purificadora-rio-jordan-api.herokuapp.com/v1/api-docs/) Creado con Swagger.
 
 ## Autores ✒️
 
