@@ -21,10 +21,6 @@
     {
       "url": "http://localhost:4015/v1",
       "description": "servidor local"
-    },
-    {
-      "url": "https://purificadora-rio-jordan-api.herokuapp.com/v1",
-      "description": "API en Heroku"
     }
   ],
   "tags": [
