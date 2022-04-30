@@ -13,7 +13,8 @@ const {
     signup,
     obtenerUsuario,
     modificarUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    cambiarPassword
  } = require('../controllers/usuarios');
 
 //Middlewares para los endpoints de /usuarios
@@ -22,6 +23,7 @@ router.post('/login', login); //Un usuario Registrado puede iniciar sesión
 router.post('/signup', opcional, signup); //Un usuario no registrado puede darse de alta, o un Admin puede agregar usuarios
 router.put('/update', requerido, modificarUsuario) //Un usuario puede modificar sus propios datos
 router.delete('/delete', requerido, eliminarUsuario) //Un usuario puede eliminar su cuenta
+router.put('/newpassword', requerido, cambiarPassword) //Un usuario puede cambiar su password
 
 //Exportamos el router creado
 module.exports = router;

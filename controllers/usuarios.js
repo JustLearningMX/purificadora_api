@@ -48,7 +48,6 @@ function signup(req, res) {
             });
         })
         .catch((e)=>{//si hubo un problema
-            console.log(e.message);
             return res.status(400).json({ //Retornamos la respuesta al Cliente
                 error: true,
                 message: e.message,
@@ -193,11 +192,65 @@ function eliminarUsuario(req, res, next) {
     .catch(next);
 }
 
+//Permite a un usuario cambiar su password
+function cambiarPassword(req, res, next) {
+
+    const idUser = req.usuario.id; // Id guardado en usuario -> id    
+
+    //Si el usuario si existe
+    let { viejoPassword, nuevoPassword } = req.body; //Guardaremos el nuevo password del body
+
+    //si viene vacío
+    if(!viejoPassword || !nuevoPassword){
+        return (res.status(401).json({
+            error: true,
+            message: 'Los passwords no pueden venir vacíos',
+        }));
+    };
+
+    //Buscamos al usuario por su ID
+    Usuario.findById(idUser)
+        .then( user => { 
+            //si no existe el usuario
+            if(!user){
+                return (res.status(401).json({
+                    error: true,
+                    message: 'No existe el usuario',
+                }));
+            };
+
+            //Validamos primero el password actual
+            const isValid = user.validarPassword(viejoPassword);
+            if(!isValid){
+                return (res.status(401).json({
+                    error: true,
+                    message: 'El Password actual es incorrecto',
+                }));
+            }
+
+            //Si existe el usuario y su password actual está correcto
+            user.crearPassword(nuevoPassword);
+
+            //Actualizamos los datos
+            Usuario.findByIdAndUpdate(idUser, user, { new: true})
+                .then((usuarioActualizado)=>{            
+                    return res.status(201).json({
+                        error: null,
+                        message: 'Contraseña actualizada correctamente.',
+                        usuario: usuarioActualizado.publicData() //Datos del usuario modificado
+                    })
+                })
+                .catch(next)            
+            
+        })
+        .catch(next) 
+}
 
 module.exports = {
     login,
     signup,
     obtenerUsuario,
     modificarUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    cambiarPassword
 };
