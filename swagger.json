@@ -244,6 +244,54 @@
           }
         }
       }
+    },
+    "/usuarios/newpassword": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Usuario ya autenticado puede cambiar su password",
+        "description": "El usuario puede realizar un cambio de contraseña. JWT de seguridad requerido.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/cambiarPassword"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Contraseña cambiada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cambioPasswordExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -569,6 +617,48 @@
               "apellidos": {
                 "type": "string",
                 "example": "Martínez"
+              }
+            }
+          }
+        }
+      },
+      "cambiarPassword": {
+        "type": "object",
+        "required": [
+          "nuevoPassword"
+        ],
+        "properties": {
+          "nuevoPassword": {
+            "type": "string",
+            "example": "minuevopa$$word"
+          }
+        }
+      },
+      "cambioPasswordExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Usuario y sus datos eliminados exitosamente"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "telefono": {
+                "type": "string",
+                "example": 8331234567
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Juan"
+              },
+              "email": {
+                "type": "string",
+                "example": "none@none.com"
               }
             }
           }
