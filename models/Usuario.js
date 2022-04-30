@@ -45,6 +45,7 @@ const UsuarioSchema = new mongoose.Schema(
     //Campos que el usuario puede Actualizar una vez dado de alta
     direccion: String,
     ciudad: String,
+    estado: String,
     cp: { 
         type: String,
         match: [/^[0-9]+$/, "Es inválido"],

@@ -117,8 +117,80 @@ function obtenerUsuario(req, res, next) {
     .catch(next);
 };
 
+//Actualizar datos de un Usuario
+function modificarUsuario(req, res, next) {
+    const idUser = req.usuario.id; // Id guardado en usuario -> id
+
+    //Buscamos al usuario por su ID
+    Usuario.findById(idUser)
+        .then( user => { 
+            //si no existe el usuario
+            if(!user){
+                return (res.status(401).json({
+                    error: true,
+                    message: 'No existe el usuario',
+                }));
+            };
+        })
+        .catch(next)
+
+    //Si el usuario si existe
+    let nuevaInfo = {}; //Guardaremos los datos del body    
+    
+    //Vamos validando los campos que no vengan vacíos del body
+    for (const key in req.body) {
+        if (typeof req.body[key] !== 'undefined' && req.body[key]){
+            nuevaInfo[key] = req.body[key]; //Lo guardamos en una nuevo objecto
+        }
+    }
+    
+    //Actualizamos los datos
+    Usuario.findByIdAndUpdate(idUser, nuevaInfo, { new: true})
+        .then((usuarioActualizado)=>{            
+            return res.status(201).json({ //Retornamos la respuesta al Cliente
+                error: null,
+                message: 'Datos del usuario actualizados exitosamente',
+                usuario: usuarioActualizado.publicData() //Datos del usuario modificado
+            })
+        })
+        .catch(next)
+}
+
+//Elimina un usuario
+function eliminarUsuario(req, res, next) {
+    const idUser = req.usuario.id; // Id guardado en usuario -> id
+
+    //Buscamos al usuario por su ID
+    Usuario.findById(idUser)
+        .then( user => { 
+            //si no existe el usuario
+            if(!user){
+                return (res.status(401).json({
+                    error: true,
+                    message: 'No existe el usuario',
+                }));
+            };
+        })
+        .catch(next)
+
+    //Si el usuario si existe
+    Usuario.findOneAndDelete({ _id: idUser })
+    .then((usuarioElimninado) => {
+        // res.status(200).send(`Usuario ${req.params.id} eliminado: ${r}`);
+        return res.status(201).json({ //Retornamos la respuesta al Cliente
+                error: null,
+                message: 'Usuario y sus datos eliminados exitosamente',
+                usuario: usuarioElimninado.publicData() //Datos del usuario eñliminado    
+        })
+    })
+    .catch(next);
+}
+
+
 module.exports = {
     login,
     signup,
-    obtenerUsuario
+    obtenerUsuario,
+    modificarUsuario,
+    eliminarUsuario
 };
