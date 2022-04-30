@@ -10,7 +10,7 @@ const passport = require('passport'); //Módulo para autenticación
 const Usuario = mongoose.model('Usuario'); //Modelo a utilizar
 
 //Crear nuevo usuario
-function signup(req, res, next) {
+function signup(req, res) {
 
     //Obtenemos el cuerpo con los datos de la petición
     //para crear un usuario nuevo se requieren: nombre, 
@@ -47,7 +47,14 @@ function signup(req, res, next) {
                 usuario: dataUser //Datos del usuario creado
             });
         })
-        .catch(next) //si hubo un problema
+        .catch((e)=>{//si hubo un problema
+            console.log(e.message);
+            return res.status(400).json({ //Retornamos la respuesta al Cliente
+                error: true,
+                message: e.message,
+                type: e
+            })
+        }) 
 };
 
 //Iniciar sesión en la aplicación
