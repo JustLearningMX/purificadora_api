@@ -134,6 +134,7 @@ UsuarioSchema.methods.publicData = function(){
 
         direccion: this.direccion ? this.direccion : null,
         ciudad: this.ciudad ? this.ciudad : null,
+        estado: this.estado ? this.estado : null,
         cp: this.cp ? this.cp : null,
         rfc: this.rfc ? this.rfc : null,
         emailRecuperacion: this.emailRecuperacion ? this.emailRecuperacion : null,
