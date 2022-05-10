@@ -116,6 +116,7 @@ UsuarioSchema.methods.toAuthJSON = function () {
     telefono: this.telefono,
     email: this.email,
     admin: this.tipo === 'admin' ? true : false,
+    empleado: this.tipo === 'empleado' ? true : false,
     token: this.generarJWT(),
   };
 };
