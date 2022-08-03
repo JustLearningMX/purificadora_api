@@ -123,6 +123,26 @@ function obtenerUsuario(req, res, next) {
     .catch(next);
 };
 
+//Busca al usuario logueado por su id
+function obtenerUsuarios(req, res, next) {
+    const usuario = req.usuario; // Id guardado en usuario -> id
+
+    if(!usuario) {
+        return (res.status(401).json({
+            error: true,
+            message: 'Es necesario autenticarse como Administrador o Empleado para acceder a este recurso',
+        }));
+    }
+
+    if(usuario) {
+        return (res.status(200).json({
+            error: false,
+            message: 'Usuario con token',
+            usuario: usuario
+        }));
+    }
+};
+
 //Actualizar datos de un Usuario
 function modificarUsuario(req, res, next) {
     const idUser = req.usuario.id; // Id guardado en usuario -> id
@@ -250,6 +270,7 @@ module.exports = {
     login,
     signup,
     obtenerUsuario,
+    obtenerUsuarios,
     modificarUsuario,
     eliminarUsuario,
     cambiarPassword

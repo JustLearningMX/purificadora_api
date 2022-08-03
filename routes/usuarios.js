@@ -12,6 +12,7 @@ const {
     login,
     signup,
     obtenerUsuario,
+    obtenerUsuarios,
     modificarUsuario,
     eliminarUsuario,
     cambiarPassword
@@ -19,6 +20,7 @@ const {
 
 //Middlewares para los endpoints de /usuarios
 router.get('/', requerido, obtenerUsuario); // Un usuario solo puede solicitar info de sí mismo
+router.get('/all', requerido, obtenerUsuarios); // El Admin y Empleado puede obtener todo el listado de los usuarios.
 router.post('/login', login); //Un usuario Registrado puede iniciar sesión
 router.post('/signup', opcional, signup); //Un usuario no registrado puede darse de alta, o un Admin puede agregar usuarios
 router.put('/update', requerido, modificarUsuario) //Un usuario puede modificar sus propios datos

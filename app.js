@@ -11,9 +11,7 @@ const debug = require('debug')('app:main'); //Debug de la aplicación
 const mongoose = require('mongoose'); //ODM para MongoDB
 const swaggerUi = require('swagger-ui-express');//Documentación
 const swaggerDocument = require('./swagger.json');//Documentación
-
-//Configura variables de entorno
-// require('./config');
+require('dotenv').config(); //Configura variables de entorno
 
 //Importamos los Modelos
 require('./models/Usuario');
@@ -43,6 +41,9 @@ mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.lpioa.mongodb.net/$
     .catch((error) => {//Si algo salió mal
         debug(`Error en la conexión al servidor de MongoDB`, error);
     });
+// mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.kvrrq.mongodb.net/${dbName}?retryWrites=true&w=majority`)
+//     .then(() => debug(`Conexión a la BD ${dbName} exitosa`))
+//     .catch((e) => debug(`Error en la conexión a la BD ${dbName}`))
 
 //Debuguear mongoose
 mongoose.set('debug', true);

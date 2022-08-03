@@ -7,8 +7,7 @@
 const jwt = require('express-jwt'); //Módulo para autorizaciones en rutas y datos
 
 //Palabra secreta para firmar el JWT
-// const config = require('../config');
-const secret = process.env.SECRET; //Palabra secreta para firmar el JWT
+const secretWord = process.env.SECRET; //Palabra secreta para firmar el JWT
 
 // Obtenemos el jwt del header de la petición y verificamos su existencia.
 function obtenerTokenDelHeader(req) {
@@ -30,7 +29,7 @@ function obtenerTokenDelHeader(req) {
 const auth = {
     //Si una ruta es requerida con autorización
     requerido: jwt({
-        secret: secret,
+        secret: secretWord,
         algorithms: ['HS256'],
         userProperty: 'usuario', //JWT descifrado y se puede utilizar después en el objeto request por medio de req.usuario
         obtenerToken: obtenerTokenDelHeader
@@ -38,7 +37,7 @@ const auth = {
 
     //Si una ruta es opcional
     opcional: jwt({
-        secret: secret,
+        secret: secretWord,
         algorithms: ['HS256'],
         userProperty: 'usuario', //JWT descifrado y se puede utilizar después en el objeto request por medio de req.usuario
         credentialsRequired: false, //Aquí se indica que las credenciales no son obligatorias

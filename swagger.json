@@ -19,7 +19,7 @@
       "description": "Servidor en Heroku (Prod)"
     },
     {
-      "url": "http://localhost:4015/v1",
+      "url": "http://localhost:4005/v1",
       "description": "Servidor local (Dev)"
     }
   ],
@@ -140,6 +140,44 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/obtieneDatosUsuario"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/usuarios/all": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "usuarios"
+        ],
+        "summary": "Retorna todos los usuarios",
+        "description": "Retorna un arreglo con todos los usuarios del sistema. Sólo Administradores y empleados con JWT de seguridad requerido.",
+        "responses": {
+          "201": {
+            "description": "Lista de usuarios generada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneListaUsuarios"
                 }
               }
             }
@@ -462,6 +500,75 @@
               },
               "token": {
                 "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "obtieneListaUsuarios": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Lista de usuarios generada exitosamente"
+          },
+          "usuarios": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "6255d9b05e779cf3a8a22c76"
+                },
+                "nombre": {
+                  "type": "string",
+                  "example": "Hiram"
+                },
+                "apellidos": {
+                  "type": "string",
+                  "example": "Chávez"
+                },
+                "tipo": {
+                  "type": "string",
+                  "example": "Admin"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "none@none.com"
+                },
+                "telefono": {
+                  "type": "string",
+                  "example": 8331234567
+                },
+                "direccion": {
+                  "type": "string",
+                  "example": "mi dirección"
+                },
+                "ciudad": {
+                  "type": "string",
+                  "example": "Tampico"
+                },
+                "cp": {
+                  "type": "string",
+                  "example": 89550
+                },
+                "rfc": {
+                  "type": "string",
+                  "example": "calh811212f90"
+                },
+                "emailRecuperacion": {
+                  "type": "string",
+                  "example": "otroemail@none.com"
+                },
+                "telefonoRecuperacion": {
+                  "type": "string",
+                  "example": 9990987654
+                }
               }
             }
           }
