@@ -21,7 +21,7 @@ function signup(req, res) {
 
     if(!req.usuario){        
         body.tipo = 'cliente'
-    } else if(!req.usuario.admin) {
+    } else if(!req.usuario.tipo === 'admin') {
         return (
             res.status(401).json({
                 error: true,
@@ -124,22 +124,35 @@ function obtenerUsuario(req, res, next) {
 };
 
 //Busca al usuario logueado por su id
+// /usuarios/all
 function obtenerUsuarios(req, res, next) {
-    const usuario = req.usuario; // Id guardado en usuario -> id
+    const usuario = req.usuario; // Usuario existente
 
-    if(!usuario) {
+    if(!usuario || (usuario && usuario.tipo === 'cliente')) {
         return (res.status(401).json({
             error: true,
             message: 'Es necesario autenticarse como Administrador o Empleado para acceder a este recurso',
         }));
     }
 
-    if(usuario) {
-        return (res.status(200).json({
-            error: false,
-            message: 'Usuario con token',
-            usuario: usuario
-        }));
+    //Si existe un usuario, y es Admin o Empleado (No Clientes)
+    //Se le envía toda la lista de los usuarios
+    if(usuario && (usuario.tipo === 'admin' || usuario.tipo === 'empleado')) {      
+        
+        Usuario.find()
+            .then(todos => {    
+                let arrayUsers = [];
+                todos.map( (user)=>{
+                    arrayUsers.push(user.publicData());
+                });
+
+                return (res.status(201).json({
+                    error: false,
+                    message: 'Lista de usuarios generada exitosamente',
+                    usuarios: arrayUsers
+                }));
+            })
+            .catch(next)
     }
 };
 

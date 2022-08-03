@@ -103,7 +103,7 @@ UsuarioSchema.methods.generarJWT = function () {
       id: this._id, //Id del usuario en la BD
       telefono: this.telefono, //Su teléfono
       email: this.email,
-      admin: this.tipo === 'admin' ? true : false,
+      tipo: this.tipo === 'admin' ? 'admin' : this.tipo === 'empleado'  ? 'empleado' : 'cliente',
       exp: parseInt(expedido.getTime() / 1000), //Periodo validez
     }, secret ); //Palabra secreta para validar el token
 
