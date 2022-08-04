@@ -27,6 +27,10 @@
     {
       "name": "usuarios",
       "description": "Endpoint que maneja toda la información referente a los usuarios."
+    },
+    {
+      "name": "productos",
+      "description": "Endpoint que maneja toda la información referente a los productos."
     }
   ],
   "paths": {
@@ -312,6 +316,246 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/cambioPasswordExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/productos": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "productos"
+        ],
+        "summary": "Retorna todos los productos",
+        "description": "Retorna un arreglo con todos los productos del sistema. Sólo Administradores y empleados con JWT de seguridad requerido.",
+        "responses": {
+          "201": {
+            "description": "Lista de productos generada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneListaProductos"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "productos"
+        ],
+        "summary": "Registro de producto nuevo",
+        "description": "Permite crear productos nuevos. Administradores y Empleados pueden acceder a este endpoint mediante su Token (Logueados).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/crearProducto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Registro de producto exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crearProductoExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/productos/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID del producto"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "productos"
+        ],
+        "summary": "Obtiene los datos de un producto",
+        "description": "Retorna datos del producto que coincida con el ID enviado en los parámetros. Sólo usuarios logueados, Admins o Empleados.",
+        "responses": {
+          "201": {
+            "description": "Producto encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneDatosProducto"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID del producto"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "productos"
+        ],
+        "summary": "Actualización de los datos de un producto.",
+        "description": "Permite a un usuario logueado (Admin o Empleado) modificar total o parcialmente los datos de un producto. Requiere token de autenticación.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateProducto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Actualización de datos del producto exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateProductoExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID del producto"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "productos"
+        ],
+        "summary": "Elimina totalmente a un producto y sus datos.",
+        "description": "Permite a un usuario logueado (Admin o Empleado) eliminar los datos de un producto de la aplicación. Requiere token de autenticación.",
+        "responses": {
+          "200": {
+            "description": "Producto y sus datos eliminado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/borradoProductoExitoso"
                 }
               }
             }
@@ -766,6 +1010,259 @@
               "email": {
                 "type": "string",
                 "example": "none@none.com"
+              }
+            }
+          }
+        }
+      },
+      "obtieneListaProductos": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Lista de productos generada exitosamente"
+          },
+          "productos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "62758f71f313ddeef8859dae"
+                },
+                "nombre": {
+                  "type": "string",
+                  "example": "Garrafón"
+                },
+                "medida": {
+                  "type": "string",
+                  "example": "litros"
+                },
+                "cantidad": {
+                  "type": "number",
+                  "example": 20
+                },
+                "precio": {
+                  "type": "number",
+                  "example": 18
+                }
+              }
+            }
+          }
+        }
+      },
+      "obtieneDatosProducto": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Producto encontrado"
+          },
+          "producto": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62758f71f313ddeef8859dae"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Garrafón"
+              },
+              "medida": {
+                "type": "string",
+                "example": "litros"
+              },
+              "cantidad": {
+                "type": "number",
+                "example": 20
+              },
+              "precio": {
+                "type": "number",
+                "example": 18
+              }
+            }
+          }
+        }
+      },
+      "crearProducto": {
+        "type": "object",
+        "required": [
+          "nombre",
+          "medida",
+          "cantidad",
+          "precio"
+        ],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Botella"
+          },
+          "medida": {
+            "type": "string",
+            "example": "litro"
+          },
+          "cantidad": {
+            "type": "number",
+            "example": 1
+          },
+          "precio": {
+            "type": "number",
+            "example": 7
+          }
+        }
+      },
+      "crearProductoExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "null"
+          },
+          "message": {
+            "type": "string",
+            "example": "Producto guardado exitosamente"
+          },
+          "producto": {
+            "type": "object",
+            "required": [
+              "nombre",
+              "medida",
+              "cantidad",
+              "precio"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Botella"
+              },
+              "medida": {
+                "type": "string",
+                "example": "litro"
+              },
+              "cantidad": {
+                "type": "number",
+                "example": 1
+              },
+              "precio": {
+                "type": "number",
+                "example": 7
+              }
+            }
+          }
+        }
+      },
+      "updateProducto": {
+        "type": "object",
+        "required": [
+          "nombre",
+          "medida",
+          "cantidad",
+          "precio"
+        ],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Botella"
+          },
+          "medida": {
+            "type": "string",
+            "example": "litro"
+          },
+          "cantidad": {
+            "type": "number",
+            "example": 1
+          },
+          "precio": {
+            "type": "number",
+            "example": 7
+          }
+        }
+      },
+      "updateProductoExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Actualización exitosa"
+          },
+          "producto": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Botella"
+              },
+              "medida": {
+                "type": "string",
+                "example": "litro"
+              },
+              "cantidad": {
+                "type": "number",
+                "example": 1
+              },
+              "precio": {
+                "type": "number",
+                "example": 7
+              }
+            }
+          }
+        }
+      },
+      "borradoProductoExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Producto y sus datos eliminados exitosamente"
+          },
+          "producto": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Botella"
+              },
+              "medida": {
+                "type": "string",
+                "example": "litro"
+              },
+              "cantidad": {
+                "type": "number",
+                "example": 1
+              },
+              "precio": {
+                "type": "number",
+                "example": 7
               }
             }
           }
