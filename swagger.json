@@ -212,7 +212,7 @@
           "usuarios"
         ],
         "summary": "Actualización de los datos de un usuario.",
-        "description": "Permite a un usuario logueado modificar total o parcialmente sus datos. Requiere token de autenticación.",
+        "description": "Permite a un usuario logueado modificar total o parcialmente sus datos. El Admin puede modificar usuarios enviando por el Body el ID del usuario. Requiere token de autenticación.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -260,7 +260,16 @@
           "usuarios"
         ],
         "summary": "Elimina totalmente a un usuario y sus datos.",
-        "description": "Permite a un usuario logueado eliminar su cuenta y sus datos de la aplicación. Requiere token de autenticación.",
+        "description": "Permite a un usuario logueado eliminar su cuenta y sus datos de la aplicación. El Admin puede borrar usuarios enviando por el Body el ID del usuario. Requiere token de autenticación.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deleteUsuario"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Usuario y sus datos eliminado exitosamente.",
@@ -887,10 +896,16 @@
       "updateUsuario": {
         "type": "object",
         "required": [
+          "id",
           "telefono",
-          "password"
+          "nombre",
+          "apellidos"
         ],
         "properties": {
+          "id": {
+            "type": "string",
+            "example": "6255d9b05e779cf3a8a22c76"
+          },
           "telefono": {
             "type": "string",
             "example": 8331234567
@@ -936,6 +951,18 @@
                 "example": "Martínez"
               }
             }
+          }
+        }
+      },
+      "deleteUsuario": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "6255d9b05e779cf3a8a22c76"
           }
         }
       },

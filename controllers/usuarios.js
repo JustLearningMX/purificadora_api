@@ -158,7 +158,11 @@ function obtenerUsuarios(req, res, next) {
 
 //Actualizar datos de un Usuario
 function modificarUsuario(req, res, next) {
-    const idUser = req.usuario.id; // Id guardado en usuario -> id
+    if(req.usuario.tipo === 'admin') { //Si el Admin desea modificar un usuario
+        idUser = req.body.id ? req.body.id : req.usuario.id;
+    } else { // Si un usuario desea modificar su cuenta
+        idUser = req.usuario.id; 
+    }
 
     //Buscamos al usuario por su ID
     Usuario.findById(idUser)
@@ -197,7 +201,13 @@ function modificarUsuario(req, res, next) {
 
 //Elimina un usuario
 function eliminarUsuario(req, res, next) {
-    const idUser = req.usuario.id; // Id guardado en usuario -> id
+    let userId = null;
+
+    if(req.usuario.tipo === 'admin') { //Si el Admin desea eliminar un usuario
+        idUser = req.body.id;
+    } else { // Si un usuario desea eliminar su cuenta
+        idUser = req.usuario.id; 
+    }
 
     //Buscamos al usuario por su ID
     Usuario.findById(idUser)
