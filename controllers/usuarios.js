@@ -203,16 +203,19 @@ function modificarUsuario(req, res, next) {
 
 //Elimina un usuario
 function eliminarUsuario(req, res, next) {
-    let idUser = null;
+    const idUserActual = req.usuario.id; //ID del Usuario que realiza la peticion
+    const isAdmin = req.usuario.tipo === 'cliente' ? false : true; //Si el usuario que realiza la peticion es Admin/Empleado
+    const idUserAEliminar = req.params.id; //ID del Usuario a eliminar    
 
-    if(req.usuario.tipo === 'admin') { //Si el Admin desea eliminar un usuario
-        idUser = req.body.id;
-    } else { // Si un usuario desea eliminar su cuenta
-        idUser = req.usuario.id; 
+    if(idUserAEliminar !== idUserActual && !isAdmin){
+        return (res.status(401).json({
+            error: true,
+            message: 'Es necesario autenticarse como Administrador o Empleado para eliminar a otros usuarios.',
+        }));
     }
 
     //Buscamos al usuario por su ID
-    Usuario.findById(idUser)
+    Usuario.findById(idUserAEliminar)
         .then( user => { 
             //si no existe el usuario
             if(!user){
@@ -225,7 +228,7 @@ function eliminarUsuario(req, res, next) {
         .catch(next)
 
     //Si el usuario si existe
-    Usuario.findOneAndDelete({ _id: idUser })
+    Usuario.findOneAndDelete({ _id: idUserAEliminar })
     .then((usuarioElimninado) => {
         // res.status(200).send(`Usuario ${req.params.id} eliminado: ${r}`);
         return res.status(201).json({ //Retornamos la respuesta al Cliente

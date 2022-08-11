@@ -16,6 +16,7 @@ require('dotenv').config(); //Configura variables de entorno
 //Importamos los Modelos
 require('./models/Usuario');
 require('./models/Producto');
+require('./models/Venta');
 
 //Registro de PassporJS
 require('./config/passport');
@@ -42,9 +43,6 @@ mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.lpioa.mongodb.net/$
     .catch((error) => {//Si algo salió mal
         debug(`Error en la conexión al servidor de MongoDB`, error);
     });
-// mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.kvrrq.mongodb.net/${dbName}?retryWrites=true&w=majority`)
-//     .then(() => debug(`Conexión a la BD ${dbName} exitosa`))
-//     .catch((e) => debug(`Error en la conexión a la BD ${dbName}`))
 
 //Debuguear mongoose
 mongoose.set('debug', true);

@@ -24,7 +24,7 @@ router.get('/all', requerido, obtenerUsuarios); // El Admin y Empleado puede obt
 router.post('/login', login); //Un usuario Registrado puede iniciar sesión
 router.post('/signup', opcional, signup); //Un usuario no registrado puede darse de alta, o un Admin puede agregar usuarios
 router.put('/update', requerido, modificarUsuario) //Un usuario puede modificar sus propios datos
-router.delete('/delete', requerido, eliminarUsuario) //Un usuario puede eliminar su cuenta
+router.delete('/delete/:id', requerido, eliminarUsuario) //Un usuario puede eliminar su cuenta o un Admin eliminar usuarios
 router.put('/newpassword', requerido, cambiarPassword) //Un usuario puede cambiar su password
 
 //Exportamos el router creado
