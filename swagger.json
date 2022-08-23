@@ -31,6 +31,14 @@
     {
       "name": "productos",
       "description": "Endpoint que maneja toda la información referente a los productos."
+    },
+    {
+      "name": "sucursales",
+      "description": "Endpoint que maneja toda la información referente a las sucursales."
+    },
+    {
+      "name": "ventas",
+      "description": "Endpoint que gestiona toda la información referente a las ventas."
     }
   ],
   "paths": {
@@ -249,8 +257,20 @@
         }
       }
     },
-    "/usuarios/delete": {
+    "/usuarios/delete/{id}": {
       "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID del Usuario"
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -260,16 +280,7 @@
           "usuarios"
         ],
         "summary": "Elimina totalmente a un usuario y sus datos.",
-        "description": "Permite a un usuario logueado eliminar su cuenta y sus datos de la aplicación. El Admin puede borrar usuarios enviando por el Body el ID del usuario. Requiere token de autenticación.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/deleteUsuario"
-              }
-            }
-          }
-        },
+        "description": "Permite a un usuario logueado eliminar su cuenta y sus datos de la aplicación. El Admin/Empleado puede borrar usuarios. Requiere token de autenticación.",
         "responses": {
           "200": {
             "description": "Usuario y sus datos eliminado exitosamente.",
@@ -565,6 +576,486 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/borradoProductoExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/sucursales": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "sucursales"
+        ],
+        "summary": "Retorna todos las sucursales",
+        "description": "Retorna un arreglo con todos las sucursales de la empresa. Sólo Administradores y empleados con JWT de seguridad requerido.",
+        "responses": {
+          "201": {
+            "description": "Lista de sucursales generada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneListaSucursales"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "sucursales"
+        ],
+        "summary": "Registro de sucursal nueva",
+        "description": "Permite crear sucursales nuevas. Administradores y Empleados pueden acceder a este endpoint mediante su Token (Logueados).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/crearSucursal"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Registro de sucursal exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crearSucursalExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/sucursales/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID de la sucursal"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "sucursales"
+        ],
+        "summary": "Obtiene los datos de una sucursal",
+        "description": "Retorna datos de la sucursal que coincida con el ID enviado en los parámetros. Sólo usuarios logueados, Admins o Empleados.",
+        "responses": {
+          "201": {
+            "description": "Sucursal encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneDatosSucursal"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID de la sucursal"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "sucursales"
+        ],
+        "summary": "Actualización de los datos de una sucursal.",
+        "description": "Permite a un usuario logueado (Admin o Empleado) modificar total o parcialmente los datos de una sucursal. Requiere token de autenticación.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateSucursal"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Actualización de datos del producto exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateSucursalExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID de la sucursal"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "sucursales"
+        ],
+        "summary": "Elimina totalmente a una sucursal y sus datos.",
+        "description": "Permite a un usuario logueado (Admin o Empleado) eliminar los datos de una sucursal de la aplicación. Requiere token de autenticación.",
+        "responses": {
+          "200": {
+            "description": "Sucursal y sus datos eliminado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/borradoSucursalExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/ventas": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "ventas"
+        ],
+        "summary": "Registro de nueva venta",
+        "description": "Permite crear una venta nueva en una tabla y sus detalles de productos en otra tabla. Administradores y Empleados pueden acceder a este endpoint mediante su Token (Logueados).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/crearVenta"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Registro de sucursal exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/crearVentaExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "ventas"
+        ],
+        "summary": "Retorna todos las ventas",
+        "description": "Retorna un arreglo con todos las ventas de la empresa. Sólo Administradores y empleados con JWT de seguridad requerido.",
+        "responses": {
+          "201": {
+            "description": "Lista de ventas generada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneListaVentas"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/ventas/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID de la venta"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "ventas"
+        ],
+        "summary": "Obtiene los datos de una venta y su detallado de productos",
+        "description": "Retorna datos de la venta que coincida con el ID enviado en los parámetros y su detallado de productos. Sólo usuarios Admins o Empleados con su token de seguridad.",
+        "responses": {
+          "201": {
+            "description": "Venta encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneDatosVenta"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID de la venta"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "ventas"
+        ],
+        "summary": "Actualización de los datos de una venta.",
+        "description": "Permite a un usuario logueado (Admin o Empleado) modificar total o parcialmente los datos de una venta y sus productos. Requiere token de autenticación.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateVenta"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Actualización de datos del producto exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateVentaExitoso"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 1
+            },
+            "description": "ID del producto"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "ventas"
+        ],
+        "summary": "Elimina totalmente una venta y sus datos.",
+        "description": "Permite a un usuario logueado (Admin o Empleado) eliminar los datos de una venta de la aplicación. Requiere token de autenticación.",
+        "responses": {
+          "200": {
+            "description": "Venta y sus datos eliminado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/borradoVentaExitoso"
                 }
               }
             }
@@ -954,18 +1445,6 @@
           }
         }
       },
-      "deleteUsuario": {
-        "type": "object",
-        "required": [
-          "id"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "6255d9b05e779cf3a8a22c76"
-          }
-        }
-      },
       "deleteExitoso": {
         "type": "object",
         "properties": {
@@ -1290,6 +1769,777 @@
               "precio": {
                 "type": "number",
                 "example": 7
+              }
+            }
+          }
+        }
+      },
+      "obtieneListaSucursales": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Lista de sucursales generada exitosamente"
+          },
+          "sucursales": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "62758f71f313ddeef8859dae"
+                },
+                "nombre": {
+                  "type": "string",
+                  "example": "Matriz"
+                },
+                "telefono": {
+                  "type": "string",
+                  "example": 5551234567
+                },
+                "direccion": {
+                  "type": "string",
+                  "example": "avenida Siempre Viva"
+                },
+                "ciudad": {
+                  "type": "string",
+                  "example": "Tampico"
+                },
+                "estado": {
+                  "type": "string",
+                  "example": "Tamaulipas"
+                },
+                "cp": {
+                  "type": "string",
+                  "example": 89520
+                }
+              }
+            }
+          }
+        }
+      },
+      "crearSucursal": {
+        "type": "object",
+        "required": [
+          "nombre"
+        ],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Matriz"
+          },
+          "telefono": {
+            "type": "string",
+            "example": 5551234567
+          },
+          "direccion": {
+            "type": "string",
+            "example": "avenida Siempre Viva"
+          },
+          "ciudad": {
+            "type": "string",
+            "example": "Tampico"
+          },
+          "estado": {
+            "type": "string",
+            "example": "Tamaulipas"
+          },
+          "cp": {
+            "type": "string",
+            "example": 89520
+          }
+        }
+      },
+      "crearSucursalExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "null"
+          },
+          "message": {
+            "type": "string",
+            "example": "Sucursal guardada exitosamente"
+          },
+          "sucursal": {
+            "type": "object",
+            "required": [
+              "nombre"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Matriz"
+              },
+              "telefono": {
+                "type": "string",
+                "example": 5551234567
+              },
+              "direccion": {
+                "type": "string",
+                "example": "avenida Siempre Viva"
+              },
+              "ciudad": {
+                "type": "string",
+                "example": "Tampico"
+              },
+              "estado": {
+                "type": "string",
+                "example": "Tamaulipas"
+              },
+              "cp": {
+                "type": "string",
+                "example": 89520
+              }
+            }
+          }
+        }
+      },
+      "obtieneDatosSucursal": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Sucursal encontrada"
+          },
+          "sucursal": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Matriz"
+              },
+              "telefono": {
+                "type": "string",
+                "example": 5551234567
+              },
+              "direccion": {
+                "type": "string",
+                "example": "avenida Siempre Viva"
+              },
+              "ciudad": {
+                "type": "string",
+                "example": "Tampico"
+              },
+              "estado": {
+                "type": "string",
+                "example": "Tamaulipas"
+              },
+              "cp": {
+                "type": "string",
+                "example": 89520
+              }
+            }
+          }
+        }
+      },
+      "updateSucursal": {
+        "type": "object",
+        "required": [
+          "nombre"
+        ],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Matriz"
+          },
+          "telefono": {
+            "type": "string",
+            "example": 5551234567
+          },
+          "direccion": {
+            "type": "string",
+            "example": "avenida Siempre Viva"
+          },
+          "ciudad": {
+            "type": "string",
+            "example": "Tampico"
+          },
+          "estado": {
+            "type": "string",
+            "example": "Tamaulipas"
+          },
+          "cp": {
+            "type": "string",
+            "example": 89520
+          }
+        }
+      },
+      "updateSucursalExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Actualización exitosa"
+          },
+          "sucursal": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Matriz"
+              },
+              "telefono": {
+                "type": "string",
+                "example": 5551234567
+              },
+              "direccion": {
+                "type": "string",
+                "example": "avenida Siempre Viva"
+              },
+              "ciudad": {
+                "type": "string",
+                "example": "Tampico"
+              },
+              "estado": {
+                "type": "string",
+                "example": "Tamaulipas"
+              },
+              "cp": {
+                "type": "string",
+                "example": 89520
+              }
+            }
+          }
+        }
+      },
+      "borradoSucursalExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Sucursal y sus datos eliminados exitosamente"
+          },
+          "sucursal": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "nombre": {
+                "type": "string",
+                "example": "Matriz"
+              },
+              "telefono": {
+                "type": "string",
+                "example": 5551234567
+              },
+              "direccion": {
+                "type": "string",
+                "example": "avenida Siempre Viva"
+              },
+              "ciudad": {
+                "type": "string",
+                "example": "Tampico"
+              },
+              "estado": {
+                "type": "string",
+                "example": "Tamaulipas"
+              },
+              "cp": {
+                "type": "string",
+                "example": 89520
+              }
+            }
+          }
+        }
+      },
+      "crearVenta": {
+        "type": "object",
+        "properties": {
+          "venta": {
+            "type": "object",
+            "required": [
+              "fecha",
+              "id_cliente",
+              "id_sucursal",
+              "id_empleado"
+            ],
+            "properties": {
+              "fecha": {
+                "type": "string",
+                "example": "12-08-2022"
+              },
+              "id_cliente": {
+                "type": "string",
+                "example": "62736bacaa03b8cfb8284399"
+              },
+              "id_sucursal": {
+                "type": "string",
+                "example": "62f56937b841d5b06b7ac4b4"
+              },
+              "id_empleado": {
+                "type": "string",
+                "example": "627a5af2b6ad5c56a00dca2e"
+              }
+            }
+          },
+          "detalleVenta": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id_producto",
+                "cantidad",
+                "precio"
+              ],
+              "properties": {
+                "id_producto": {
+                  "type": "string",
+                  "example": "62f56937b841d5b06b7ac4b4"
+                },
+                "cantidad": {
+                  "type": "number",
+                  "example": 2
+                },
+                "precio": {
+                  "type": "number",
+                  "example": 18
+                }
+              }
+            }
+          }
+        }
+      },
+      "crearVentaExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Venta guardada exitosamente"
+          },
+          "venta": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62fd596e043c96bea9030387"
+              },
+              "fecha": {
+                "type": "string",
+                "example": "12-08-2022"
+              },
+              "id_cliente": {
+                "type": "string",
+                "example": "62736bacaa03b8cfb8284399"
+              },
+              "id_sucursal": {
+                "type": "string",
+                "example": "62f56937b841d5b06b7ac4b4"
+              },
+              "id_empleado": {
+                "type": "string",
+                "example": "627a5af2b6ad5c56a00dca2e"
+              }
+            }
+          },
+          "productos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id_producto",
+                "cantidad",
+                "precio"
+              ],
+              "properties": {
+                "id_producto": {
+                  "type": "string",
+                  "example": "62f56937b841d5b06b7ac4b4"
+                },
+                "cantidad": {
+                  "type": "number",
+                  "example": 2
+                },
+                "precio": {
+                  "type": "number",
+                  "example": 18
+                },
+                "id_venta": {
+                  "type": "string",
+                  "example": "62fd596e043c96bea9030387"
+                }
+              }
+            }
+          }
+        }
+      },
+      "obtieneListaVentas": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Lista de ventas generada exitosamente"
+          },
+          "ventas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "datos": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "62fd596e043c96bea9030387"
+                    },
+                    "fecha": {
+                      "type": "string",
+                      "example": "12-08-2022"
+                    },
+                    "id_cliente": {
+                      "type": "string",
+                      "example": "62736bacaa03b8cfb8284399"
+                    },
+                    "id_sucursal": {
+                      "type": "string",
+                      "example": "62f56937b841d5b06b7ac4b4"
+                    },
+                    "id_empleado": {
+                      "type": "string",
+                      "example": "627a5af2b6ad5c56a00dca2e"
+                    }
+                  }
+                },
+                "productos": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "62fe828bff4ed1043b18160d"
+                      },
+                      "id_venta": {
+                        "type": "string",
+                        "example": "62fd596e043c96bea9030387"
+                      },
+                      "id_producto": {
+                        "type": "string",
+                        "example": "62f56937b841d5b06b7ac4b4"
+                      },
+                      "cantidad": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "precio": {
+                        "type": "number",
+                        "example": 18
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "obtieneDatosVenta": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Venta existente"
+          },
+          "venta": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "datos": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "62fd596e043c96bea9030387"
+                    },
+                    "fecha": {
+                      "type": "string",
+                      "example": "12-08-2022"
+                    },
+                    "id_cliente": {
+                      "type": "string",
+                      "example": "62736bacaa03b8cfb8284399"
+                    },
+                    "id_sucursal": {
+                      "type": "string",
+                      "example": "62f56937b841d5b06b7ac4b4"
+                    },
+                    "id_empleado": {
+                      "type": "string",
+                      "example": "627a5af2b6ad5c56a00dca2e"
+                    }
+                  }
+                },
+                "productos": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "62fe828bff4ed1043b18160d"
+                      },
+                      "id_venta": {
+                        "type": "string",
+                        "example": "62fd596e043c96bea9030387"
+                      },
+                      "id_producto": {
+                        "type": "string",
+                        "example": "62f56937b841d5b06b7ac4b4"
+                      },
+                      "cantidad": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "precio": {
+                        "type": "number",
+                        "example": 18
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "updateVenta": {
+        "type": "object",
+        "properties": {
+          "venta": {
+            "type": "object",
+            "required": [
+              "fecha",
+              "id_cliente",
+              "id_sucursal",
+              "id_empleado"
+            ],
+            "properties": {
+              "fecha": {
+                "type": "string",
+                "example": "2022-08-19T00:00:00.000Z"
+              },
+              "id_cliente": {
+                "type": "string",
+                "example": "62736bacaa03b8cfb8284399"
+              },
+              "id_sucursal": {
+                "type": "string",
+                "example": "62f56937b841d5b06b7ac4b4"
+              },
+              "id_empleado": {
+                "type": "string",
+                "example": "627a5af2b6ad5c56a00dca2e"
+              }
+            }
+          },
+          "detalleVenta": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "id_venta",
+                "id_producto",
+                "cantidad",
+                "precio"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160d"
+                },
+                "id_venta": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160c"
+                },
+                "id_producto": {
+                  "type": "string",
+                  "example": "62f56937b841d5b06b7ac4b4"
+                },
+                "cantidad": {
+                  "type": "number",
+                  "example": 1
+                },
+                "precio": {
+                  "type": "number",
+                  "example": 18
+                }
+              }
+            }
+          }
+        }
+      },
+      "updateVentaExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Datos de la venta actualizados exitosamente"
+          },
+          "venta": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "fecha": {
+                "type": "string",
+                "example": "2022-08-19T20:40:23.865Z"
+              },
+              "id_cliente": {
+                "type": "string",
+                "example": "62736bacaa03b8cfb8284399"
+              },
+              "id_empleado": {
+                "type": "string",
+                "example": "627a5af2b6ad5c56a00dca2e"
+              },
+              "id_sucursal": {
+                "type": "number",
+                "example": "62f56937b841d5b06b7ac4b4"
+              }
+            }
+          },
+          "detalleVentas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160d"
+                },
+                "id_venta": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160c"
+                },
+                "id_producto": {
+                  "type": "string",
+                  "example": "62f56937b841d5b06b7ac4b4"
+                },
+                "cantidad": {
+                  "type": "number",
+                  "example": 1
+                },
+                "precio": {
+                  "type": "number",
+                  "example": 18
+                }
+              }
+            }
+          }
+        }
+      },
+      "borradoVentaExitoso": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Venta y sus detalles eliminados exitosamente"
+          },
+          "venta": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "62eb0a2016d573ca5cd3edhe"
+              },
+              "fecha": {
+                "type": "string",
+                "example": "2022-08-19T20:40:23.865Z"
+              },
+              "id_cliente": {
+                "type": "string",
+                "example": "62736bacaa03b8cfb8284399"
+              },
+              "id_empleado": {
+                "type": "string",
+                "example": "627a5af2b6ad5c56a00dca2e"
+              },
+              "id_sucursal": {
+                "type": "number",
+                "example": "62f56937b841d5b06b7ac4b4"
+              }
+            }
+          },
+          "detalleVentas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160d"
+                },
+                "id_venta": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160c"
+                },
+                "id_producto": {
+                  "type": "string",
+                  "example": "62f56937b841d5b06b7ac4b4"
+                },
+                "cantidad": {
+                  "type": "number",
+                  "example": 1
+                },
+                "precio": {
+                  "type": "number",
+                  "example": 18
+                }
               }
             }
           }

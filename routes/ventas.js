@@ -6,7 +6,7 @@
 const router = require('express').Router();
 const { requerido } = require('./auth');
 
-//Importamos las funciones del controlador Usuarios
+//Importamos las funciones del controlador Ventas
 const {
     obtenerVentas,
     obtenerVenta,

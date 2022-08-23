@@ -6,6 +6,14 @@
  const mongoose = require('mongoose'); //Mongoose para usar esquemas de modelos
  const Venta = mongoose.model('Venta'); //Modelo a utilizar
 
+ 
+ const { 
+    crearDetalleDeVenta,
+    obtenerDetalleDeVentas,
+    eliminarDetalleDeVentas,
+    actualizarDetalleDeVentas
+} = require('../controllers/detalleVentas');
+
 function obtenerVentas(req, res, next){
 
     const usuario = verificarUsuario(req, res);
@@ -15,16 +23,22 @@ function obtenerVentas(req, res, next){
     if(usuario && (usuario.tipo === 'admin' || usuario.tipo === 'empleado')) {      
         
         Venta.find()
-            .then(todos => {    
-                let arrayVentas = [];
-                todos.map( (venta)=>{
-                    arrayVentas.push(venta.publicData());
-                });
+            .then( async (todos) => {
+                
+                const arrayVentas = await Promise.all(
+                    todos.map( async (venta) => {
+                        
+                        /**AQUI TRAEMOS LOS DETALLES DE LAS VENTAS */
+                        const detallesVenta = await obtenerDetalleDeVentas(venta.id);                        
+
+                        return {datos: venta.publicData(), productos: detallesVenta ? detallesVenta : null}
+                    })
+                );
 
                 return (res.status(201).json({
                     error: null,
                     message: 'Lista de ventas generada exitosamente',
-                    productos: arrayVentas
+                    ventas: arrayVentas
                 }));
             })
             .catch(next)
@@ -40,11 +54,16 @@ function obtenerVenta(req, res, next){
     if(usuario && (usuario.tipo === 'admin' || usuario.tipo === 'empleado')) {  
         if(idVenta) {
             Venta.findById(idVenta)
-            .then( venta => {
+            .then( async venta => {
+
+                /**AQUI TRAEMOS LOS DETALLES DE LAS VENTAS */
+                const detallesVenta = await obtenerDetalleDeVentas(idVenta);
+
                 return (res.status(201).json({
                     error: null,
                     message: 'Venta existente.',
-                    venta: venta
+                    venta: venta.publicData(),
+                    detallesVentas: detallesVenta
                 }));
             })
             .catch(next)
@@ -58,35 +77,47 @@ function crearVenta(req, res, next){
     //Si existe un usuario, y es Admin o Empleado (No Clientes)
     if(usuario && (usuario.tipo === 'admin' || usuario.tipo === 'empleado')) {  
         
-        const body = req.body;
+        const bodyVenta = req.body.venta; //Cuerpo para guardar una venta
+        const bodyDetallesVenta = req.body.detalleVenta; //Cuerpo para guardar detalle de la venta
+
         //Creamos una nueva venta basado en el modelo y su esquema
-        const venta = new Venta(body);
+        const venta = new Venta(bodyVenta);        
+
+        /**AQUI SE MANDA A CREAR EL DETALLE DE LA VENTA */
+        bodyDetallesVenta.map( async (body) => {
+            body.id_venta = venta._id.toString();
+            await crearDetalleDeVenta(body);
+        });                
+        /************************************************/
 
         //Guardamos la nueva venta en la BD de MongoDB
-        venta.save()        
-        .then( item => { //Si todo salió bien
-            const dataVenta = item.publicData(); //Datos de la venta creada
+        venta.save()
+            .then( item => { //Si todo salió bien
+                
+                const dataVenta = item.publicData(); //Datos de la venta creada            
 
-            return res.status(201).json({ //Retornamos la respuesta al Cliente
-                error: null,
-                message: 'Venta guardada exitosamente',
-                venta: dataVenta //Datos de la venta creada
-            });
-        })
-        .catch((e)=>{//si hubo un problema
-            return res.status(400).json({ //Retornamos la respuesta al Cliente
-                error: true,
-                message: e.message,
-                type: e
+                return res.status(201).json({ //Retornamos la respuesta al Cliente
+                    error: null,
+                    message: 'Venta guardada exitosamente!',
+                    venta: dataVenta, //Datos de la venta creada
+                    detallesVentas: bodyDetallesVenta,
+                });
             })
-        }) 
-
+            .catch((e)=>{//si hubo un problema
+                return res.status(400).json({ //Retornamos la respuesta al Cliente
+                    error: true,
+                    message: e.message,
+                    type: e
+                })
+            })
     }
 }
 
 function actualizarVenta(req, res, next){
     const usuario = verificarUsuario(req, res);
     const idVenta = req.params.id
+    const bodyVenta = req.body.venta; //Cuerpo para guardar una venta
+    const bodyDetallesVenta = req.body.detalleVenta; //Cuerpo para guardar detalle de la venta
     
     //Si existe un usuario, y es Admin o Empleado (No Clientes)
     if(usuario && (usuario.tipo === 'admin' || usuario.tipo === 'empleado')) {
@@ -108,19 +139,34 @@ function actualizarVenta(req, res, next){
     let nuevaInfo = {}; //Guardaremos los datos del body    
 
     //Vamos validando los campos que no vengan vacíos del body
-    for (const key in req.body) {
-        if (typeof req.body[key] !== 'undefined' && req.body[key]){
-            nuevaInfo[key] = req.body[key]; //Lo guardamos en una nuevo objecto
+    for (const key in bodyVenta) {
+        if (typeof bodyVenta[key] !== 'undefined' && bodyVenta[key]){
+            nuevaInfo[key] = bodyVenta[key]; //Lo guardamos en una nuevo objecto
         }
     }
 
     //Actualizamos los datos
     Venta.findByIdAndUpdate(idVenta, nuevaInfo, { new: true})
-        .then((ventaActualizada)=>{            
+        .then( async ventaActualizada => {
+
+            const arrayDetallesVentas = await Promise.all(
+                bodyDetallesVenta.map( async detalleProducto => {
+
+                    const idDelDetalle = detalleProducto.id;
+                    delete detalleProducto.id;
+                    
+                    /**AQUI ACTUALIZAMOS LOS DETALLES DE LAS VENTAS */
+                    const detallesVenta = await actualizarDetalleDeVentas(idDelDetalle, detalleProducto);
+
+                    return detallesVenta;
+                })
+            );
+
             return res.status(201).json({ //Retornamos la respuesta al Cliente
                 error: null,
                 message: 'Datos de la venta actualizados exitosamente',
-                producto: ventaActualizada.publicData() //Datos de la venta modificada
+                venta: ventaActualizada.publicData(), //Datos de la venta modificada
+                detallesVentas: arrayDetallesVentas
             })
         })
         .catch(next)
@@ -147,16 +193,21 @@ function eliminarVenta(req, res, next){
             })
             .catch(next)
 
-        //Si la venta si existe
+        //Si la venta si existe, se elimina
         Venta.findOneAndDelete({ _id: idVenta })
-        .then((ventaEliminada) => {
-            return res.status(201).json({ //Retornamos la respuesta al Cliente
-                    error: null,
-                    message: 'Venta y sus datos eliminados exitosamente',
-                    venta: ventaEliminada.publicData() //Datos de la venta eliminada   
+            .then(async (ventaEliminada) => {
+                
+                /**AQUI ELIMINAMOS LOS PRODUCTOS DE LA VENTA */
+                const productosEliminados = await eliminarDetalleDeVentas(idVenta)
+
+                return res.status(201).json({ //Retornamos la respuesta al Cliente
+                        error: null,
+                        message: 'Venta y sus datos eliminados exitosamente',
+                        venta: ventaEliminada.publicData(), //Datos de la venta eliminada
+                        detallesVentas: productosEliminados
+                })
             })
-        })
-        .catch(next);
+            .catch(next);
     }
 }
 

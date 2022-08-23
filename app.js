@@ -16,7 +16,9 @@ require('dotenv').config(); //Configura variables de entorno
 //Importamos los Modelos
 require('./models/Usuario');
 require('./models/Producto');
+require('./models/Sucursal');
 require('./models/Venta');
+require('./models/DetalleVenta');
 
 //Registro de PassporJS
 require('./config/passport');
