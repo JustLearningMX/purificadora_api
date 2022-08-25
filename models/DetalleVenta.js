@@ -27,7 +27,8 @@ DetalleVentaSchema.methods.publicData = function(){
         id_venta: this.id_venta,
         id_producto: this.id_producto,
         cantidad: this.cantidad ,
-        precio: this.precio, 
+        precio: this.precio,
+        fecha: this.createdAt,
     });
 };
 
