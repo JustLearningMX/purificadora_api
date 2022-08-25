@@ -9,10 +9,16 @@ const mongoose = require("mongoose");//Importamos mongoose
 const VentaSchema = new mongoose.Schema(
   {
     //Campos requeridos
-    // fecha : { type: Date, required: [true, "No puede estar vacío"] },
-    id_cliente: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: [true, "No puede estar vacío"], index: true },
+    telefono_cliente: {
+      type: String,
+      required: [true, "No puede estar vacío"],
+      match: [/^[0-9]+$/, "Es inválido"],
+      index: true,
+    },
     id_sucursal: {type: mongoose.Schema.Types.ObjectId, ref: 'Sucursal', required: [true, "No puede estar vacío"] },
     id_empleado: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: [true, "No puede estar vacío"] },
+    // fecha : { type: Date, required: [true, "No puede estar vacío"] },
+    // id_cliente: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: [true, "No puede estar vacío"], index: true },
   },
   {
     timestamps: true, //Fecha de creación y/o modificación
@@ -25,7 +31,7 @@ VentaSchema.methods.publicData = function(){
   return ({
     id: this.id,
     fecha: this.createdAt,
-    id_cliente: this.id_cliente,
+    telefono_cliente: this.id_cliente,
     id_empleado: this.id_empleado,
     id_sucursal: this.id_sucursal,
   });

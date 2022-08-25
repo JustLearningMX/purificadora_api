@@ -2080,19 +2080,14 @@
           "venta": {
             "type": "object",
             "required": [
-              "fecha",
-              "id_cliente",
+              "telefono_cliente",
               "id_sucursal",
               "id_empleado"
             ],
             "properties": {
-              "fecha": {
+              "telefono_cliente": {
                 "type": "string",
-                "example": "12-08-2022"
-              },
-              "id_cliente": {
-                "type": "string",
-                "example": "62736bacaa03b8cfb8284399"
+                "example": 3001234567
               },
               "id_sucursal": {
                 "type": "string",
@@ -2153,9 +2148,9 @@
                 "type": "string",
                 "example": "12-08-2022"
               },
-              "id_cliente": {
+              "telefono_cliente": {
                 "type": "string",
-                "example": "62736bacaa03b8cfb8284399"
+                "example": 3001234567
               },
               "id_sucursal": {
                 "type": "string",
