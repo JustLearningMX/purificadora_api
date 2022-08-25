@@ -19,6 +19,8 @@ require('./models/Producto');
 require('./models/Sucursal');
 require('./models/Venta');
 require('./models/DetalleVenta');
+require('./models/InventarioCliente');
+require('./models/LlenadoGratis');
 
 //Registro de PassporJS
 require('./config/passport');

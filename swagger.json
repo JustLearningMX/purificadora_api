@@ -2123,6 +2123,30 @@
                 }
               }
             }
+          },
+          "inventarioCliente": {
+            "type": "object",
+            "required": [
+              "cantidad_actual"
+            ],
+            "properties": {
+              "cantidad_actual": {
+                "type": "number",
+                "example": 2
+              }
+            }
+          },
+          "llenadoGratis": {
+            "type": "object",
+            "required": [
+              "cantidad"
+            ],
+            "properties": {
+              "cantidad": {
+                "type": "number",
+                "example": 1
+              }
+            }
           }
         }
       },
@@ -2162,31 +2186,115 @@
               }
             }
           },
-          "productos": {
+          "detallesVentas": {
             "type": "array",
             "items": {
               "type": "object",
-              "required": [
-                "id_producto",
-                "cantidad",
-                "precio"
-              ],
               "properties": {
-                "id_producto": {
+                "error": {
                   "type": "string",
-                  "example": "62f56937b841d5b06b7ac4b4"
+                  "example": null
                 },
-                "cantidad": {
-                  "type": "number",
-                  "example": 2
-                },
-                "precio": {
-                  "type": "number",
-                  "example": 18
-                },
-                "id_venta": {
+                "message": {
                   "type": "string",
-                  "example": "62fd596e043c96bea9030387"
+                  "example": "Detalle de la Venta guardada exitosamente"
+                },
+                "datos": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "6307bb2f59b3c8dd1907bd07"
+                    },
+                    "id_venta": {
+                      "type": "string",
+                      "example": "62fd596e043c96bea9030387"
+                    },
+                    "id_producto": {
+                      "type": "string",
+                      "example": "62f56937b841d5b06b7ac4b4"
+                    },
+                    "cantidad": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "precio": {
+                      "type": "number",
+                      "example": 18
+                    },
+                    "fecha": {
+                      "type": "string",
+                      "example": "2022-08-25T18:10:55.171Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "inventarioCliente": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string",
+                "example": null
+              },
+              "message": {
+                "type": "string",
+                "example": "Inventario del cliente actualizado exitosamente"
+              },
+              "datos": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "6307a16f876ee35201a814ec"
+                  },
+                  "telefono_cliente": {
+                    "type": "string",
+                    "example": 3001234567
+                  },
+                  "id_venta": {
+                    "type": "string",
+                    "example": "6307bb2f59b3c8dd1907bd06"
+                  },
+                  "cantidad_actual": {
+                    "type": "number",
+                    "example": 2
+                  }
+                }
+              }
+            }
+          },
+          "llenadoGratis": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string",
+                "example": null
+              },
+              "message": {
+                "type": "string",
+                "example": "Llenado gratis del cliente creado y guardado exitosamente en la BD"
+              },
+              "datos": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "6307a16f876ee35201a814ec"
+                  },
+                  "telefono_cliente": {
+                    "type": "string",
+                    "example": 3001234567
+                  },
+                  "id_venta": {
+                    "type": "string",
+                    "example": "6307bb2f59b3c8dd1907bd06"
+                  },
+                  "cantidad": {
+                    "type": "number",
+                    "example": 2
+                  }
                 }
               }
             }

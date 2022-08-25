@@ -5,14 +5,16 @@
 
  const mongoose = require('mongoose'); //Mongoose para usar esquemas de modelos
  const Venta = mongoose.model('Venta'); //Modelo a utilizar
-
  
  const { 
     crearDetalleDeVenta,
     obtenerDetalleDeVentas,
     eliminarDetalleDeVentas,
     actualizarDetalleDeVentas
-} = require('../controllers/detalleVentas');
+} = require('./detalleVentas'); //../controllers/detalleVentas
+
+const { gestionarInventarioCliente } = require('./inventarioClientes');
+const { crearLlenadoGratis } = require('./llenadosGratis');
 
 function obtenerVentas(req, res, next){
 
@@ -71,7 +73,7 @@ function obtenerVenta(req, res, next){
     }
 }
 
-function crearVenta(req, res, next){
+async function crearVenta(req, res, next){
     const usuario = verificarUsuario(req, res);
 
     //Si existe un usuario, y es Admin o Empleado (No Clientes)
@@ -79,16 +81,38 @@ function crearVenta(req, res, next){
         
         const bodyVenta = req.body.venta; //Cuerpo para guardar una venta
         const bodyDetallesVenta = req.body.detalleVenta; //Cuerpo para guardar detalle de la venta
+        const bodyInventarioCliente = req.body.inventarioCliente; //Cuerpo para guardar la nueva cantidad
+        const bodyLlenadosGratis = req.body.llenadoGratis; //Cuerpo para guardar la cantidad de llenados gratis
 
         //Creamos una nueva venta basado en el modelo y su esquema
         const venta = new Venta(bodyVenta);        
 
-        /**AQUI SE MANDA A CREAR EL DETALLE DE LA VENTA */
-        bodyDetallesVenta.map( async (body) => {
-            body.id_venta = venta._id.toString();
-            await crearDetalleDeVenta(body);
-        });                
-        /************************************************/
+        /**********AQUI SE MANDA A CREAR EL DETALLE DE LA VENTA *******/
+        const resDetalleVentas = await Promise.all(
+            bodyDetallesVenta.map( async (body) => {
+                body.id_venta = venta._id.toString();
+                return await crearDetalleDeVenta(body);
+            })
+        );
+        /**************************************************************/
+
+        /**AQUI SE MANDA A CREAR O ACTUALIZAR EL INVENTARIO DE COMPRA DEL CLIENTE */
+        let inventarioClienteActualizado = null;
+        if(bodyVenta.telefono_cliente !== '0000000000') {
+            bodyInventarioCliente.telefono_cliente = bodyVenta.telefono_cliente;
+            bodyInventarioCliente.id_venta = venta._id.toString();
+            inventarioClienteActualizado = await gestionarInventarioCliente(bodyInventarioCliente);
+        }
+        /**************************************************************************/
+
+        /**AQUI SE MANDA A CREAR EL REGISTRO DE LOS LLENADOS GRATIS DE LA COMPRA DEL CLIENTE */
+        let llenadoGratisActualizado = null;
+        if(bodyLlenadosGratis.cantidad > 0) { //Solo si hay llenados gratis
+            bodyLlenadosGratis.telefono_cliente = bodyVenta.telefono_cliente;
+            bodyLlenadosGratis.id_venta = venta._id.toString();
+            llenadoGratisActualizado = await crearLlenadoGratis(bodyLlenadosGratis);
+        }
+        /*************************************************************************************/
 
         //Guardamos la nueva venta en la BD de MongoDB
         venta.save()
@@ -100,7 +124,9 @@ function crearVenta(req, res, next){
                     error: null,
                     message: 'Venta guardada exitosamente!',
                     venta: dataVenta, //Datos de la venta creada
-                    detallesVentas: bodyDetallesVenta,
+                    detallesVentas: resDetalleVentas,
+                    inventarioCliente: inventarioClienteActualizado,
+                    llenadoGratis: llenadoGratisActualizado
                 });
             })
             .catch((e)=>{//si hubo un problema
