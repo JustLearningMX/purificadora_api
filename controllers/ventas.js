@@ -98,7 +98,7 @@ async function crearVenta(req, res, next){
 
         /**AQUI SE MANDA A CREAR O ACTUALIZAR EL INVENTARIO DE COMPRA DEL CLIENTE */
         let inventarioClienteActualizado = null;
-        if(bodyVenta.telefono_cliente !== '0000000000') {
+        if(bodyVenta.telefono_cliente !== '0000000000') { //Si no es un usuario sin registrar
             bodyInventarioCliente.telefono_cliente = bodyVenta.telefono_cliente;
             bodyInventarioCliente.id_venta = venta._id.toString();
             inventarioClienteActualizado = await gestionarInventarioCliente(bodyInventarioCliente);

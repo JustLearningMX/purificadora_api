@@ -9,14 +9,11 @@ const InventarioCliente = mongoose.model('InventarioCliente'); //Modelo a utiliz
  *de botellones de 19lts actuales del cliente */
 async function gestionarInventarioCliente(body){
 
-    //Primero buscar si ya existe un usuario con ese telefono
-    const usuarios = await InventarioCliente.find();
-
-    const usuario = usuarios
-        .filter( usuario => usuario.telefono_cliente === body.telefono_cliente );
+    //Se busca al cliente en la tabla inventarioCliente
+    const usuario = await encontrarClienteEnTabla(body.telefono_cliente);
     
     if(usuario.length > 0) {//Si existe el usuario, se actualiza su inventario
-        const idInventario = usuario[0]._id.toString();
+        const idInventario = usuario[usuario.length-1]._id.toString();
 
         //Actualizamos la cantidad actual de garrafones del cliente
         try {
@@ -55,7 +52,7 @@ async function gestionarInventarioCliente(body){
         } catch (e) { //Si hubo un error
             return {
                 error: true,
-                message: 'No se puedo guardar el Inventario de la compra del cliente',
+                message: 'No se pudo guardar el Inventario de la compra del cliente',
                 venta: body,
                 totalError: e,
             };
@@ -63,6 +60,80 @@ async function gestionarInventarioCliente(body){
     }
 }
 
+/**Este metodo recibe el telefono del cliente, lo busca en la tabla inventarioCliente,
+ * si existe devuelve un objeto con la cantidad_actual que tiene el cliente de su ultimo
+ * llenado, en caso de no existir aun devuelve FALSE
+*/
+async function obtenerInventarioCliente(req,res, next) {
+    const telefono_cliente = req.params.telefono; //Telefono del cliente
+    
+    const usuario = verificarUsuario(req, res); //Si el usuario existe
+
+    //Si el usuario es Admin o Empleado
+    if(usuario && (usuario.tipo === 'admin' || usuario.tipo === 'empleado')) { 
+
+        try {
+            //Se busca al cliente en la tabla inventarioCliente
+            const cliente = await encontrarClienteEnTabla(telefono_cliente); 
+
+            //Si se encontro un cliente
+            if(cliente.length > 0) {
+                const dataCliente = cliente[cliente.length-1].publicData();
+
+                //Retornamos la cantidad que tiene el cliente
+                return res.status(201).json({ 
+                    error: null,
+                    message: 'Cliente encontrado exitosamente en la tabla inventarioCliente',
+                    fueEncontrado: true,
+                    datos: dataCliente,
+                });
+            } else {
+                //Retornamos que el cliente no existe en la tabla
+                return res.status(404).json({ 
+                    error: null,
+                    message: 'Cliente no existe en la tabla.',
+                    fueEncontrado: false,
+                    telefono_cliente: telefono_cliente,
+                });
+            }
+            
+        } catch (e) {
+            return res.status(500).json({
+                error: true,
+                message: 'Error en el servidor al buscar Cliente en la tabla inventarioCliente.',
+                telefono_cliente: telefono_cliente,
+                totalError: e,
+            });
+        }
+    }
+}
+
+/**Verificar si ya existe un cliente con ese telefono en la tabla inventarioCliente de MongoDB*/
+async function encontrarClienteEnTabla(telefono_cliente) {
+    const usuarios = await InventarioCliente.find(); //Todos los usuarios
+    
+    //Filtramos para encontrar al usuario especifico
+    const usuario = usuarios 
+        .filter( usuario => usuario.telefono_cliente === telefono_cliente );
+
+    return usuario; //Retornamos lo que encontro o no.
+}
+
+/**Verificar que un usuario exista y sea Admin  o Empleado */
+function verificarUsuario(req, res){    
+    const usuario = req.usuario; // Usuario existente
+
+    if(!usuario || (usuario && usuario.tipo === 'cliente')) {
+        return (res.status(401).json({
+            error: true,
+            message: 'Es necesario autenticarse como Administrador o Empleado para acceder a este recurso',
+        }));
+    }
+
+    return usuario;
+}
+
 module.exports = {
-    gestionarInventarioCliente
+    gestionarInventarioCliente,
+    obtenerInventarioCliente
 }
