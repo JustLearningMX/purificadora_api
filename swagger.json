@@ -1079,6 +1079,44 @@
         }
       }
     },
+    "/inventarioClientes": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "inventarioClientes"
+        ],
+        "summary": "Retorna a los usuarios de tabla inventarioCliente con su última cantidad de garrafones de 19lts",
+        "description": "Retorna un arreglo del cliente con todos los datos acerca de su última cantidad de garrafones en su última compra. Sólo Administradores y empleados con JWT de seguridad requerido.",
+        "responses": {
+          "201": {
+            "description": "Inventario de clientes encontrado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/obtieneListaInventarioCliente"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
     "/inventarioClientes/{telefono}": {
       "get": {
         "parameters": [
@@ -1101,7 +1139,7 @@
         "tags": [
           "inventarioClientes"
         ],
-        "summary": "Obtiene la última cantidad de garrafones que llenó el usuario",
+        "summary": "Obtiene la última cantidad de garrafones que llenó un usuario",
         "description": "Retorna los datos del último llenado del cliente, cantidad total de garrafones y en qué venta se realizó. Sólo usuarios logueados, Admins o Empleados.",
         "responses": {
           "201": {
@@ -2735,6 +2773,43 @@
               "cantidad_actual": {
                 "type": "number",
                 "example": 3
+              }
+            }
+          }
+        }
+      },
+      "obtieneListaInventarioCliente": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "message": {
+            "type": "string",
+            "example": "Inventario de clientes encontrado exitosamente."
+          },
+          "datos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "63090e91f55ab394837d8b54"
+                },
+                "telefono_cliente": {
+                  "type": "string",
+                  "example": 3001234567
+                },
+                "id_venta": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160c"
+                },
+                "cantidad_actual": {
+                  "type": "number",
+                  "example": 2
+                }
               }
             }
           }

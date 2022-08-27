@@ -62,9 +62,8 @@ async function gestionarInventarioCliente(body){
 
 /**Este metodo recibe el telefono del cliente, lo busca en la tabla inventarioCliente,
  * si existe devuelve un objeto con la cantidad_actual que tiene el cliente de su ultimo
- * llenado, en caso de no existir aun devuelve FALSE
-*/
-async function obtenerInventarioCliente(req,res, next) {
+ * llenado, en caso de no existir aun devuelve FALSE */
+async function obtenerInventarioCliente(req,res) {
     const telefono_cliente = req.params.telefono; //Telefono del cliente
     
     const usuario = verificarUsuario(req, res); //Si el usuario existe
@@ -108,6 +107,43 @@ async function obtenerInventarioCliente(req,res, next) {
     }
 }
 
+/**Este metodo trae todos los datos de la tabla inventarioCliente,
+ * y devuelve un array de objetos con la cantidad_actual que tienen
+ * los clientes de su ultimo llenado*/
+ async function obtenerInventarioClientes(req,res) {
+    // const telefono_cliente = req.params.telefono; //Telefono del cliente
+    
+    const usuario = verificarUsuario(req, res); //Si el usuario existe
+
+    //Si el usuario es Admin o Empleado
+    if(usuario && (usuario.tipo === 'admin' || usuario.tipo === 'empleado')) {
+
+        try {
+            //Se buscan todos los clientes y sus datos en la tabla inventarioCliente
+            const todos = await InventarioCliente.find();
+
+            //Mapeamos lo encontrado
+            const usuariosInventario = todos.map( inventario => {
+                return inventario.publicData();
+            });
+
+            //Retornamos la informacion al usuario
+            return res.status(201).json({ 
+                error: null,
+                message: 'Inventario de clientes encontrado exitosamente.',
+                datos: usuariosInventario,
+            });
+            
+        } catch (e) {
+            return res.status(500).json({
+                error: true,
+                message: 'Error en el servidor al buscar Cliente en la tabla inventarioCliente.',
+                totalError: e,
+            });
+        }
+    }
+}
+
 /**Verificar si ya existe un cliente con ese telefono en la tabla inventarioCliente de MongoDB*/
 async function encontrarClienteEnTabla(telefono_cliente) {
     const usuarios = await InventarioCliente.find(); //Todos los usuarios
@@ -135,5 +171,6 @@ function verificarUsuario(req, res){
 
 module.exports = {
     gestionarInventarioCliente,
-    obtenerInventarioCliente
+    obtenerInventarioCliente,
+    obtenerInventarioClientes
 }

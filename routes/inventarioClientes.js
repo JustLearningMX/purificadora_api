@@ -8,9 +8,11 @@ const { requerido } = require('./auth');
 //Importamos las funciones del controlador inventarioClientes
 const { 
     obtenerInventarioCliente,
+    obtenerInventarioClientes
 } = require('../controllers/inventarioClientes');
 
 //Middlewares para los endpoints de /inventarioClientes, solo Admins y empleados
+router.get('/', requerido, obtenerInventarioClientes); // Obtener inventario de todos los clientes
 router.get('/:telefono', requerido, obtenerInventarioCliente); // Obtener inventario de un solo cliente
 
 //Exportamos el router creado
