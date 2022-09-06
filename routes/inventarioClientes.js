@@ -13,7 +13,7 @@ const {
 
 //Middlewares para los endpoints de /inventarioClientes, solo Admins y empleados
 router.get('/', requerido, obtenerInventarioClientes); // Obtener inventario de todos los clientes
-router.get('/:telefono', requerido, obtenerInventarioCliente); // Obtener inventario de un solo cliente
+router.get('/uno', requerido, obtenerInventarioCliente); // Obtener inventario de un solo cliente
 
 //Exportamos el router creado
 module.exports = router;

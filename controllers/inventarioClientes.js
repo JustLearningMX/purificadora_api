@@ -60,50 +60,44 @@ async function gestionarInventarioCliente(body){
     }
 }
 
-/**Este metodo recibe el telefono del cliente, lo busca en la tabla inventarioCliente,
- * si existe devuelve un objeto con la cantidad_actual que tiene el cliente de su ultimo
- * llenado, en caso de no existir aun devuelve FALSE */
+/**Este metodo recibe al usuario logueado mediante su token (Cliente o Empleado), lo busca en 
+ * la tabla inventarioCliente, si existe devuelve un objeto con la cantidad_actual que tiene 
+ * el cliente de su ultimo llenado, en caso de no existir aun, devuelve FALSE */
 async function obtenerInventarioCliente(req,res) {
-    const telefono_cliente = req.params.telefono; //Telefono del cliente
-    
-    const usuario = verificarUsuario(req, res); //Si el usuario existe
+    const telefono_cliente = req.usuario.telefono;
 
-    //Si el usuario es Admin o Empleado
-    if(usuario && (usuario.tipo === 'admin' || usuario.tipo === 'empleado')) { 
+    try {
+        //Se busca al cliente en la tabla inventarioCliente
+        const cliente = await encontrarClienteEnTabla(telefono_cliente); 
 
-        try {
-            //Se busca al cliente en la tabla inventarioCliente
-            const cliente = await encontrarClienteEnTabla(telefono_cliente); 
+        //Si se encontro un cliente
+        if(cliente.length > 0) {
+            const dataCliente = cliente[cliente.length-1].publicData();
 
-            //Si se encontro un cliente
-            if(cliente.length > 0) {
-                const dataCliente = cliente[cliente.length-1].publicData();
-
-                //Retornamos la cantidad que tiene el cliente
-                return res.status(201).json({ 
-                    error: null,
-                    message: 'Cliente encontrado exitosamente en la tabla inventarioCliente',
-                    fueEncontrado: true,
-                    datos: dataCliente,
-                });
-            } else {
-                //Retornamos que el cliente no existe en la tabla
-                return res.status(404).json({ 
-                    error: null,
-                    message: 'Cliente no existe en la tabla.',
-                    fueEncontrado: false,
-                    telefono_cliente: telefono_cliente,
-                });
-            }
-            
-        } catch (e) {
-            return res.status(500).json({
-                error: true,
-                message: 'Error en el servidor al buscar Cliente en la tabla inventarioCliente.',
+            //Retornamos la cantidad que tiene el cliente
+            return res.status(201).json({ 
+                error: null,
+                message: 'Cliente encontrado exitosamente en la tabla inventarioCliente',
+                fueEncontrado: true,
+                datos: dataCliente,
+            });
+        } else {
+            //Retornamos que el cliente no existe en la tabla
+            return res.status(404).json({ 
+                error: null,
+                message: 'Cliente no existe en la tabla.',
+                fueEncontrado: false,
                 telefono_cliente: telefono_cliente,
-                totalError: e,
             });
         }
+        
+    } catch (e) {
+        return res.status(500).json({
+            error: true,
+            message: 'Error en el servidor al buscar Cliente en la tabla inventarioCliente.',
+            telefono_cliente: telefono_cliente,
+            totalError: e,
+        });
     }
 }
 

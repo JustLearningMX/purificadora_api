@@ -1117,20 +1117,8 @@
         }
       }
     },
-    "/inventarioClientes/{telefono}": {
+    "/inventarioClientes/uno": {
       "get": {
-        "parameters": [
-          {
-            "in": "path",
-            "name": "telefono",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minimum": 1
-            },
-            "description": "Número de teléfono del cliente"
-          }
-        ],
         "security": [
           {
             "bearerAuth": []
@@ -1140,7 +1128,7 @@
           "inventarioClientes"
         ],
         "summary": "Obtiene la última cantidad de garrafones que llenó un usuario",
-        "description": "Retorna los datos del último llenado del cliente, cantidad total de garrafones y en qué venta se realizó. Sólo usuarios logueados, Admins o Empleados.",
+        "description": "Retorna los datos del último llenado del cliente, cantidad total de garrafones y en qué venta se realizó. Sólo usuarios logueados con su token de seguridad.",
         "responses": {
           "201": {
             "description": "Cliente encontrado exitosamente en la tabla inventarioCliente",
