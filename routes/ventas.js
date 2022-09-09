@@ -12,10 +12,10 @@ const {
     obtenerVenta,
     crearVenta,
     actualizarVenta,
-    eliminarVenta
+    eliminarVenta,
  } = require('../controllers/ventas');
 
-//Middlewares para los endpoints de /productos, solo Admins y empleados
+//Middlewares para los endpoints de /ventas, solo Admins y empleados
 router.get('/', requerido, obtenerVentas); //  Obtener todos las ventas
 router.get('/:id', requerido, obtenerVenta); // Obtener una venta
 router.post('/', requerido, crearVenta); // Crear uno nuevo

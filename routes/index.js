@@ -20,6 +20,7 @@ router.use('/productos', require('./productos')); //purificadora_api/v1/producto
 router.use('/sucursales', require('./sucursales')); //purificadora_api/v1/sucursales
 router.use('/ventas', require('./ventas')); //purificadora_api/v1/ventas
 router.use('/inventarioClientes', require('./inventarioClientes')); //purificadora_api/v1/inventarioClientes
+router.use('/reportes', require('./reportes')); //purificadora_api/v1/ventas
 
 //Exportamos el router creado
 module.exports = router;

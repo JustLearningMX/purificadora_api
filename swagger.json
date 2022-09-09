@@ -43,6 +43,10 @@
     {
       "name": "inventarioClientes",
       "description": "Endpoint que gestionar toda la información referente a la última cantidad de garrafones que llenó un cliente."
+    },
+    {
+      "name": "reportes",
+      "description": "Endpoint que gestionar toda la información referente a los distintos reportes que se generan."
     }
   ],
   "paths": {
@@ -1136,6 +1140,82 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/obtieneDatosInventarioCliente"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/reportes/historialDeCompras": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "reportes"
+        ],
+        "summary": "Usuario ya autenticado obtiene un historial de sus compras",
+        "description": "Retorna un array con todas las compras y sus detalles que ha hecho un usuario.",
+        "responses": {
+          "201": {
+            "description": "Compras del usuario 0000123456 generados exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/historialDeComprasDelUsuario"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/reportes/historialDeLlenadosGratis": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "reportes"
+        ],
+        "summary": "Usuario ya autenticado obtiene un historial de sus llenados gratis",
+        "description": "Retorna un array con todos los llenados gratis de un usuario.",
+        "responses": {
+          "201": {
+            "description": "Datos de los Llenados gratis del usuario 0000123456 generados exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/historialDeLlenadosGratis"
                 }
               }
             }
@@ -2797,6 +2877,124 @@
                 "cantidad_actual": {
                   "type": "number",
                   "example": 2
+                }
+              }
+            }
+          }
+        }
+      },
+      "historialDeComprasDelUsuario": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "tieneDatos": {
+            "type": "string",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Compras del usuario 0000123456 generados exitosamente."
+          },
+          "ventas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "63090e91f55ab394837d8b54"
+                },
+                "telefono_cliente": {
+                  "type": "string",
+                  "example": 3001234567
+                },
+                "id_venta": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160c"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "example": "2022-08-31T14:56:54.262Z"
+                },
+                "Productos": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "nombre": {
+                        "type": "string",
+                        "example": "Garrafon"
+                      },
+                      "medida": {
+                        "type": "string",
+                        "example": "litros"
+                      },
+                      "capacidad": {
+                        "type": "integer",
+                        "example": 19
+                      },
+                      "id_venta": {
+                        "type": "string",
+                        "example": "630f76b65eb3cf79b9f24209"
+                      },
+                      "id_producto": {
+                        "type": "string",
+                        "example": "62f2a17281de05ae2869feab"
+                      },
+                      "cantidad": {
+                        "type": "integer",
+                        "example": 3
+                      },
+                      "precio": {
+                        "type": "integer",
+                        "example": 19
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "historialDeLlenadosGratis": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": null
+          },
+          "tieneDatos": {
+            "type": "string",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Datos de los Llenados gratis del usuario 0000123456 generados exitosamente."
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "telefono_cliente": {
+                  "type": "string",
+                  "example": 3001234567
+                },
+                "id_venta": {
+                  "type": "string",
+                  "example": "62fe828bff4ed1043b18160c"
+                },
+                "cantidad": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "createdAt": {
+                  "type": "string",
+                  "example": "2022-08-31T14:56:54.262Z"
                 }
               }
             }

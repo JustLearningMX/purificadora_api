@@ -3,8 +3,8 @@
  * y Eliminar Ventas mediante las funciones que
  * nos proporciona mongoose*/
 
- const mongoose = require('mongoose'); //Mongoose para usar esquemas de modelos
- const Venta = mongoose.model('Venta'); //Modelo a utilizar
+const mongoose = require('mongoose'); //Mongoose para usar esquemas de modelos
+const Venta = mongoose.model('Venta'); //Modelo a utilizar
  
  const { 
     crearDetalleDeVenta,
@@ -255,5 +255,5 @@ function verificarUsuario(req, res){
     obtenerVenta,
     crearVenta,
     actualizarVenta,
-    eliminarVenta
+    eliminarVenta,
 };
