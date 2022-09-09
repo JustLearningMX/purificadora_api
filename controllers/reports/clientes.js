@@ -30,7 +30,7 @@ async function obtenerVentasPorUsuario(req, res){
                 error: null,            
                 tieneDatos: true,
                 message: `Compras del usuario ${telefono_cliente} generados exitosamente`,
-                ventas: detalleVentasProductos, 
+                data: detalleVentasProductos, 
             })
         }
     } catch (error) {

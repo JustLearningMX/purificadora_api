@@ -2898,7 +2898,7 @@
             "type": "string",
             "example": "Compras del usuario 0000123456 generados exitosamente."
           },
-          "ventas": {
+          "data": {
             "type": "array",
             "items": {
               "type": "object",
