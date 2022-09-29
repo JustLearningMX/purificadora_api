@@ -68,7 +68,7 @@ async function obtenerInventarioCliente(req,res) {
 
     try {
         //Se busca al cliente en la tabla inventarioCliente
-        const cliente = await encontrarClienteEnTabla(telefono_cliente); 
+        const cliente = await encontrarClienteEnTabla(telefono_cliente);
 
         //Si se encontro un cliente
         if(cliente.length > 0) {

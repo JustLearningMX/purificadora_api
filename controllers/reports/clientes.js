@@ -90,5 +90,5 @@ function verificarUsuario(req) {
 
 module.exports = {
     obtenerVentasPorUsuario,
-    obtenerLlenadosGratisPorUsuario
+    obtenerLlenadosGratisPorUsuario,
 };
